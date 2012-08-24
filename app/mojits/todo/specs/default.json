@@ -1,0 +1,15 @@
+[
+    {
+        "settings": [ "master" ],
+
+        "type": "HTMLFrameMojit",
+        "config": {
+            "deploy": true,
+            "title": "TodoMVC",
+            "child": {
+                "type": "todo",
+                "action": "index"
+            }
+        }
+    }
+]
