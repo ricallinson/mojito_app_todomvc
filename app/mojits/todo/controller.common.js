@@ -9,7 +9,7 @@ YUI.add("todo", function(Y, NAME) {
 
         	var cfg = {
         			children: {
-        				items: {
+        				todos: {
         					type: "todo",
         					action: "todos"
         				}
@@ -19,6 +19,11 @@ YUI.add("todo", function(Y, NAME) {
         	ac.assets.addCss("./base.css");
 
         	ac.composite.execute(cfg, function (data, meta) {
+
+                data.total = 0;
+                data.completed = 0;
+                data.showFooter = data.total ? true : false;
+
         		ac.done(data);
         	});
         },
@@ -29,6 +34,28 @@ YUI.add("todo", function(Y, NAME) {
         		ac.done({todos: todos});
         	});
         	
+        },
+
+        addTodo: function (ac) {
+
+            var text = ac.params.merged("text"),
+                data = {};
+
+            // If there is no text just return
+            if (!text) {
+                ac.done("");
+                return;
+            }
+
+            data.todos = [
+                {
+                    id: "uuid",
+                    text: text,
+                    completed: false
+                }
+            ];
+
+            ac.done(data, "todos");
         }
     };
 

@@ -19,17 +19,7 @@ YUI.add("todo-model", function (Y, NAME) {
         },
 
         list: function (cb) {
-            var todos = [{
-                    id: "uuid",
-                    text: "Some test data that is for you",
-                    completed: false
-                },
-                {
-                    id: "uuid",
-                    text: "Some test data that is for them",
-                    completed: false
-                }
-            ];
+            var todos = [];
 
             cb(todos);
         },
