@@ -32,4 +32,4 @@ YUI.add("todo_binder_index", function(Y, NAME) {
         }
     };
 
-}, "0.0.1", {requires: ["mojito-client"]});
+}, "0.0.1", {requires: ["mojito-client", "node", "escape"]});
