@@ -11,27 +11,41 @@ YUI.add("todo", function(Y, NAME) {
         			children: {
         				todos: {
         					type: "todo",
-        					action: "todos"
+        					action: "listTodos"
         				}
         			}
         		};
 
         	ac.assets.addCss("./base.css");
+            ac.assets.addCss("./extra.css");
 
         	ac.composite.execute(cfg, function (data, meta) {
 
-                data.total = 0;
-                data.completed = 0;
+                data.total = meta.total;
+                data.completed = meta.completed;
+                data.showClear = data.completed ? true : false;
                 data.showFooter = data.total ? true : false;
 
         		ac.done(data);
         	});
         },
 
-        todos: function (ac) {
+        listTodos: function (ac) {
 
-        	ac.models.todo.list(function (todos) {
-        		ac.done({todos: todos});
+        	ac.models.todo.all(function (todos) {
+
+                var meta = {
+                        total: todos.length,
+                        completed: 0
+                    };
+
+                Y.Array.each(todos, function (todo) {
+                    if (todo.completed) {
+                        meta.completed = meta.completed + 1;
+                    }
+                });
+
+        		ac.done({todos: todos}, meta);
         	});
         	
         },
@@ -39,7 +53,7 @@ YUI.add("todo", function(Y, NAME) {
         addTodo: function (ac) {
 
             var text = ac.params.merged("text"),
-                data = {};
+                todo = {};
 
             // If there is no text just return
             if (!text) {
@@ -47,15 +61,46 @@ YUI.add("todo", function(Y, NAME) {
                 return;
             }
 
-            data.todos = [
-                {
-                    id: "uuid",
-                    text: text,
-                    completed: false
-                }
-            ];
+            todo = {
+                guid: Y.guid(),
+                text: text,
+                completed: false
+            };
 
-            ac.done(data, "todos");
+            ac.models.todo.add(todo, function (stored) {
+
+                if (!stored) {
+                    ac.done("");
+                    return;
+                }
+
+                ac.done({todos: [todo]}, "listTodos");
+            });
+        },
+
+        completeTodo: function (ac) {
+
+            var guid = ac.params.merged("guid"),
+                completed = ac.params.merged("completed") ? true : false,
+                todo;
+
+            todo = {
+                guid: guid,
+                completed: completed
+            };
+
+            ac.models.todo.update(todo, function (stored) {
+                ac.done({guid: guid, success: stored}, "json");
+            });
+        },
+
+        removeTodo: function (ac) {
+
+            var guid = ac.params.merged("guid");
+
+            ac.models.todo.remove(guid, function (stored) {
+                ac.done({guid: guid, success: stored}, "json");
+            });
         }
     };
 

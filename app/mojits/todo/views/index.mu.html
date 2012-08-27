@@ -20,7 +20,7 @@
 			<!-- This should be `0 items left` by default -->
 			<span id="todo-count"><strong>{{total}}</strong> item left</span>
 			<!-- Remove this if you don't implement routing -->
-			<ul id="filters">
+			<!-- <ul id="filters">
 				<li>
 					<a class="selected" href="#/">All</a>
 				</li>
@@ -30,8 +30,8 @@
 				<li>
 					<a href="#/completed">Completed</a>
 				</li>
-			</ul>
-			<button id="clear-completed">Clear completed ({{completed}})</button>
+			</ul> -->
+			<button id="clear-completed" {{^showClear}}class="hidden"{{/showClear}}>Clear completed (<em>{{completed}}</em>)</button>
 		</footer>
 
 	</section>
