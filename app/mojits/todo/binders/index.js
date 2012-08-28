@@ -30,8 +30,8 @@ YUI.add("todo_binder_index", function(Y, NAME) {
         	}, "#new-todo");
 
             // Listen for a edited todo
-            node.delegate("keypress", function (e) {
-                if (e.keyCode === 13) {
+            node.delegate(["keypress", "blur"], function (e) {
+                if (e.type === "blur" || e.keyCode === 13) {
                     var guid = e.currentTarget.ancestor("li").get("id"),
                         text = Y.Escape.html(Y.Lang.trim(e.currentTarget.get("value")));
                     self.mp.invoke("updateTodo", {params: {body: {guid: guid, text: text}}}, function (err, html) {
@@ -48,9 +48,9 @@ YUI.add("todo_binder_index", function(Y, NAME) {
 
             // Listen for an edit click
             node.delegate("dblclick", function (e) {
-                var text = e.currentTarget;
-                text.ancestor("li").addClass('editing');
-                text.focus();
+                var li = e.currentTarget.ancestor("li");
+                li.addClass('editing');
+                li.one("input.edit").focus();
             }, "label");
 
         	// Listen for a todo (un)complete click
@@ -120,4 +120,4 @@ YUI.add("todo_binder_index", function(Y, NAME) {
         }
     };
 
-}, "0.0.1", {requires: ["mojito-client", "node", "escape"]});
+}, "0.0.1", {requires: ["mojito-client", "node", "escape", "event-focus"]});
