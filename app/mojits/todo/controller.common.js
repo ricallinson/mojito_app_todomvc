@@ -78,14 +78,16 @@ YUI.add("todo", function(Y, NAME) {
             });
         },
 
-        completeTodo: function (ac) {
+        updateTodo: function (ac) {
 
             var guid = ac.params.merged("guid"),
+                text = ac.params.merged("text") || null,
                 completed = ac.params.merged("completed") ? true : false,
                 todo;
 
             todo = {
                 guid: guid,
+                text: text,
                 completed: completed
             };
 

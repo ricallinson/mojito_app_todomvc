@@ -29,10 +29,34 @@ YUI.add("todo_binder_index", function(Y, NAME) {
 	            }
         	}, "#new-todo");
 
+            // Listen for a edited todo
+            node.delegate("keypress", function (e) {
+                if (e.keyCode === 13) {
+                    var guid = e.currentTarget.ancestor("li").get("id"),
+                        text = Y.Escape.html(Y.Lang.trim(e.currentTarget.get("value")));
+                    self.mp.invoke("updateTodo", {params: {body: {guid: guid, text: text}}}, function (err, html) {
+                        if (err) {
+                            Y.log(err);
+                        } else if (html) {
+                            e.currentTarget.ancestor("li").removeClass('editing');
+                            e.currentTarget.ancestor("li").one("label").setHTML(text);
+                            self.syncUI(node);
+                        }
+                    });
+                }
+            }, "input.edit");
+
+            // Listen for an edit click
+            node.delegate("dblclick", function (e) {
+                var text = e.currentTarget;
+                text.ancestor("li").addClass('editing');
+                text.focus();
+            }, "label");
+
         	// Listen for a todo (un)complete click
         	node.delegate("click", function (e) {
         		var guid = e.currentTarget.ancestor("li").get("id");
-        		self.mp.invoke("completeTodo", {params: {body: {guid: guid, completed: !e.currentTarget.ancestor("li").hasClass("completed")}}}, function (err, data) {
+        		self.mp.invoke("updateTodo", {params: {body: {guid: guid, completed: !e.currentTarget.ancestor("li").hasClass("completed")}}}, function (err, data) {
 	        		if (data && data.success) {
 	        			Y.one("#" + data.guid).toggleClass("completed");
 	        			self.syncUI(node);
@@ -40,13 +64,13 @@ YUI.add("todo_binder_index", function(Y, NAME) {
 	        	});
         	}, ".toggle");
 
-        	// Listen for a todo remove click
-        	node.delegate("click", function (e) {
-        		var guid = e.currentTarget.ancestor("li").get("id");
-        		self.remove(guid, node, function () {
-    				self.syncUI(node);
-    			});
-        	}, ".destroy");
+            // Listen for a todo remove click
+            node.delegate("click", function (e) {
+                var guid = e.currentTarget.ancestor("li").get("id");
+                self.remove(guid, node, function () {
+                    self.syncUI(node);
+                });
+            }, ".destroy");
 
         	// Listen for a clear completed click
         	node.one("#clear-completed").on("click", function () {
